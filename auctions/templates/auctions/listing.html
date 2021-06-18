@@ -1,0 +1,141 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}Auctions{% endblock %}
+
+{% block body %}
+    <div class="card-group">
+        <div>
+            <div class="card" style="padding:10px;">
+                <img src="{{ listing.Image }}" alt="{{ listing.Title }}" width=500px height=auto>
+            </div>
+        </div>
+        <div class="card" style="padding:20px;">
+            <div>
+                <h3>{{ listing.Title }}</h3>
+                <div>
+                    {{ listing.Description }}
+                </div>
+                <br>
+                <h4>Bid: ${{ listing.Bid.bid }}</h4>
+                {% if listing.Bid.bidder is not None %}
+                    <br><h6>Winning Bidder: {{ listing.Bid.bidder }}</h6>
+                {% else %}
+                    <br><h6>Winning Bidder: No bids</h6>
+                {% endif %}
+            </div>
+            {% if request.user.username == listing.user.username %}
+                <div>
+                    <div style="position:relative; top:20px;">
+                        <a href="{% url 'edit_list' listing.Title %}">
+                            <button class="btn btn-primary">Edit listing</button>
+                        </a>
+                    </div>
+                    <div>
+                        <form action="{% url 'update' listing.Title %}" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="prev_page" value="{{ request.path }}">
+                            <div class="form-group row">
+                                <div style="position:relative; left:15px; top:60px;">
+                                    {% if listing.Active == True %}
+                                        <input class="btn btn-danger" type="submit" name="is_not_active" value="Close Listing">
+                                    {% else %}
+                                        <input class="btn btn-success" type="submit" name="is_active" value="Reopen Listing">
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div><br>
+            {% else %}
+                {% if listing.Active == True %}
+                    <div>
+                        <form action="{% url 'listing' listing.Title %}" method="POST">
+                            {% csrf_token %}
+                            {% if message %}
+                                <div class="form-group row">
+                                    <div class="col-8" style="color: red;">
+                                        *{{ message }}*
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <br>
+                            <div class="form-group row">
+                                <label for="bid" class="col-sm-2 col-form-label"><h6>Your Bid:</h6></label>
+                                <div class="col-2" style="position:relative; left:-50px; top:-3px;">
+                                    <input type="number" class="form-control" name="list_bid" id="bid" value="{{ listing.Bid.bid }}">
+                                </div>
+                            </div>
+                            <div>
+                                <input type="submit" value="Place Bid" class="btn btn-primary">
+                            </div><br>
+                        </form>            
+                    </div> 
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <div><br>
+        <h4>Details</h4>
+        <div>
+            <ul>
+                <li>Listed By: {{ listing.user.username }}</li>
+                <li>Category: {{ listing.Category }}</li>
+            </ul>
+        </div>
+    </div>
+    <div>
+        {% if not request.user.username == listing.user.username %}
+               <form action="{% url 'watchlist' request.user.username %}" method="POST">
+                {% csrf_token %}
+                {% if in_watchlist == False %}
+                    <input type="hidden" name="Add_watchlist" value="True">
+                    <input type="hidden" name="list_title" value="{{ listing.Title }}">
+                    <div style="position:relative; top:10px;">
+                        <input type="submit" class="btn btn-primary" value="Add to Watchlist">
+                    </div>
+                {% else %}
+                    <input type="hidden" name="remove_watchlist" value="True">
+                    <input type="hidden" name="list_title" value="{{ listing.Title }}">
+                    <div style="position:relative; top:10px;">
+                        <input type="submit" class="btn btn-primary" value="Remove from Watchlist">
+                    </div>
+                {% endif %}
+            </form>
+        {% endif %}
+    </div>
+    <div>
+        <br>
+        <h4>Add Comment</h4>
+        <form action="{% url 'comment' listing.Title %}" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <div class="col-7">
+                    <textarea class="form-control" name="new_comment" rows="7"></textarea>
+                </div>
+            </div>
+            <input type="hidden" name="user" value="{{request.user.username}}">
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="Add comment">
+            </div>
+        </form>
+        <h4>Comments</h4>
+        <div class="col-7" style="height:auto;">
+            <div class="card" style="padding:10px;">
+                {% for comment in comments %}
+                    <div>
+                        {% if comment.commentor.username == listing.user.username %}
+                            <strong>{{ comment.commentor.username }}</strong>
+                        {% else %}
+                            {{ comment.commentor.username }}
+                        {% endif %}
+                        : {{ comment.comment }}
+                    </div><br>
+                {% empty %}
+                    <div>
+                        No comments.
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

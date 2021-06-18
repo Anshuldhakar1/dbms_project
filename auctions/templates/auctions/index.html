@@ -1,9 +1,6 @@
 {% extends "auctions/layout.html" %}
-{% load static %}
 
 {% block title %}Auctions{% endblock %}
-
-{% block link %}<link rel="stylesheet" href="{% static 'auctions/styles.css' %}">{% endblock %}
 
 {% block body %}
 
@@ -55,24 +52,14 @@
                     <p class="card-text">
                         <div style="text-align:center;">
                             <h3>{{ listing.Title }}</h3><br>
-                            <h5>Price: ${{ listing.Bid.bid }}</h5><br>
+                            <!-- <h5>Price: ${{ listing.Bid.bid }}</h5><br> -->
                         </div>
                         <h5>{{ listing.Description }}</h5><br>
                         Created on {{ listing.Date }} , {{ listing.Time }} by {{ listing.user }}
                         {% if listing.Active == False %}
                             <div style="color:red; text-align: center;">
                                 <br><strong>This Listing is closed.</strong>
-                            </div>
-                            {% if listing.Bid.bidder is not None %}
-                                <br><strong>Winner: {{ listing.Bid.bidder.username }}</strong>
-                            {% endif %}
-                        {% endif %}
-                        {% if check_watchlist == True %}
-                            {% if listing in watchlist_listings %}
-                            <div style="color:green;text-align: center;">
-                                <br><strong>Present in your watchlist</strong>
-                            </div>
-                            {% endif %}
+                            </div>]
                         {% endif %}
                     </p>
                 </div>

@@ -6,29 +6,45 @@
 {% block link %}<link rel="stylesheet" href="{% static 'auctions/styles.css' %}">{% endblock %}
 
 {% block body %}
-    <form action="{% url 'index' %}" method="POST">
-        {% csrf_token %}
-        <div class="form-group row" style="padding-left:20px;">
-            <h2>Active Listings</h2>
-            <div style="position:relative; left:740px; top:9px;">
-                <label><h6>Sort By:</h6></label>
+
+<div style="display: flexbox; flex-direction: row; width: 100vw;">
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'index' %}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">Log In</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'register' %}">Register</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+        </ul>
+        <form action="{% url 'index' %}" method="POST">
+            {% csrf_token %}
+            <div class="form-group row" style="padding-left:20px;">
+                <div>
+                    <label><h6>Sort By:</h6></label>
+                </div>
+                <div>
+                    <select name="order" class="custom-select my-1 mr-sm-2">
+                        {% for order in orders %}
+                            {% if sel_order == order.By %}
+                                <option selected>{{ order }}</option>
+                            {% else %}
+                                <option>{{ order }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div> 
+                    <input type="submit" class="btn btn-primary" value="Sort">
+                </div>
             </div>
-            <div style="position:relative; left:750px; top:-1px;">
-                <select name="order" class="custom-select my-1 mr-sm-2">
-                    {% for order in orders %}
-                        {% if sel_order == order.By %}
-                            <option selected>{{ order }}</option>
-                        {% else %}
-                            <option>{{ order }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-            </div>
-            <div style="position:relative; left:775px; top:3px"> 
-                <input type="submit" class="btn btn-primary" value="Sort">
-            </div>
-        </div>
-    </form>
+        </form>
+    </div>
     {% for listing in listings %}
         <div class="card-group">
             <div class="card" style="padding-left:10px;">
@@ -59,11 +75,6 @@
                             {% endif %}
                         {% endif %}
                     </p>
-                </div>
-                <div style="padding: 15px;text-align: center;">
-                    <a href="{% url 'listing' listing.Title %}">
-                        <button class="btn btn-primary">View</button>
-                    </a>
                 </div>
             </div>
         </div>

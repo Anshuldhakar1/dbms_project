@@ -11,7 +11,7 @@ class Listing(models.Model):
     Title = models.CharField(max_length=64)
     Description = models.TextField()
     Bid = models.OneToOneField('Bid', blank=True, null=True, on_delete=models.CASCADE, related_name="listing")
-    Image = models.ImageField(blank=True)
+    Image = models.URLField(blank=True)
     Category = models.ForeignKey('Category', on_delete=models.CASCADE, related_name="listings")
     Date = models.DateField()
     Time = models.TimeField()

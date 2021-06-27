@@ -1,66 +1,94 @@
 {% extends "auctions/layout.html" %}
+{% load static %}
 
 {% block title %}Auctions{% endblock %}
 
-{% block body %}
+{% block link %}<link rel="stylesheet" href="{% static 'auctions/styles.css' %}">{% endblock %}
 
-<div style="display: flexbox; flex-direction: row; width: 100vw;">
-        <ul class="nav">
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'index' %}">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'login' %}">Log In</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'register' %}">Register</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-            </li>
-        </ul>
-        <form action="{% url 'index' %}" method="POST">
-            {% csrf_token %}
-            <div class="form-group row" style="padding-left:20px;">
-                <div>
-                    <label><h6>Sort By:</h6></label>
+{% block body %}
+    <!-- <form action="{% url 'index' %}" method="POST">
+        {% csrf_token %}
+        <div class="form-group row" style="padding-left:20px;">
+            <h2>Active Listings</h2>
+            <div style="position:relative; left:740px; top:9px;">
+                <label><h6>Sort By:</h6></label>
+            </div>
+            <div style="position:relative; left:750px; top:-1px;">
+                <select name="order" class="custom-select my-1 mr-sm-2">
+                    {% for order in orders %}
+                        {% if sel_order == order.By %}
+                            <option selected>{{ order }}</option>
+                        {% else %}
+                            <option>{{ order }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="position:relative; left:775px; top:3px"> 
+                <input type="submit" class="btn btn-primary" value="Sort">
+            </div>
+        </div>
+    </form> -->
+    <form action="{% url 'index' %}" method="POST" style="margin: 0.5rem 0;">
+        {% csrf_token %}
+        <div style="display:grid; grid-template-columns: 1fr auto;">
+            <h2 style="margin-left: 1rem;">Active Listings</h2>
+            <div style="display:grid; grid-template-columns: auto auto auto">
+                <div class="grid_center">
+                    <h6 style="margin:0;height:fit-content">Sort By: </h6>
                 </div>
-                <div>
-                    <select name="order" class="custom-select my-1 mr-sm-2">
-                        {% for order in orders %}
-                            {% if sel_order == order.By %}
-                                <option selected>{{ order }}</option>
-                            {% else %}
-                                <option>{{ order }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
-                </div>
-                <div> 
-                    <input type="submit" class="btn btn-primary" value="Sort">
+                <select name="order" class="custom-select my-1 mr-sm-2" style="margin: 0 0.5rem;">
+                    {% for order in orders %}
+                        {% if sel_order == order.By %}
+                            <option selected>{{ order }}</option>
+                        {% else %}
+                            <option>{{ order }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <div class="grid_center">
+                    <input style="margin-left: 1rem; height:fit-content;" type="submit" class="btn btn-primary" value="Sort">
                 </div>
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
     {% for listing in listings %}
-        <div class="card-group">
-            <div class="card" style="padding-left:10px;">
-                <img src="{{ listing.Image }}" alt="{{ listing.Title }} image" width=500px height=auto> 
+        <div class="card-group" style="height:600px; padding: 1rem 0;">
+            <div class="card grid_center" style="padding-left:10px; max-height: 600px;">
+                <img src="{{ listing.Image }}" alt="{{ listing.Title }} image" width=375px height=auto> 
             </div>
             <div class="card" style="width: 18rem;">
                 <div class="card-body">
                     <p class="card-text">
                         <div style="text-align:center;">
                             <h3>{{ listing.Title }}</h3><br>
+                            <h5>Price: ${{ listing.Bid.bid }}</h5><br>
                         </div>
                         <h5>{{ listing.Description }}</h5><br>
                         Created on {{ listing.Date }} , {{ listing.Time }} by {{ listing.user }}
                         {% if listing.Active == False %}
                             <div style="color:red; text-align: center;">
                                 <br><strong>This Listing is closed.</strong>
-                            </div>]
+                            </div>
+                            {% if listing.Bid.bidder is not None %}
+                                <div class="grid_center">
+                                    <br><strong>Winner: {{ listing.Bid.bidder.username }}</strong>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                        {% if check_watchlist == True %}
+                            {% if listing in watchlist_listings %}
+                            <div style="color:green;text-align: center;">
+                                <br><strong>Present in your watchlist</strong>
+                            </div>
+                            {% endif %}
                         {% endif %}
                     </p>
+                </div>
+                <div style="padding: 15px;text-align: center;">
+                    <a href="{% url 'listing' listing.Title %}">
+                        <button class="btn btn-primary">View</button>
+                    </a>
                 </div>
             </div>
         </div>

@@ -1,16 +1,18 @@
 from django.contrib import admin
 
-from .models import User, Listing, Category
+from .models import User, Listing, Category, Bid, Order, Comment, Watchlist
 
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('id','username','email')
+# Register your models here.
+admin.site.register(User)
+admin.site.register(Listing)
+admin.site.register(Category)
+admin.site.register(Bid)
+admin.site.register(Order)
+admin.site.register(Comment)
+admin.site.register(Watchlist)
 
-class ListingAdmin(admin.ModelAdmin):
-    list_display = ('id','user','Title','Category','Active')
-
-class CateAdmin(admin.ModelAdmin):
-    list_display = ('id','category')
-
-admin.site.register(User,UserAdmin)
-admin.site.register(Listing, ListingAdmin)
-admin.site.register(Category,CateAdmin)
+# class ListingAdmin(admin.ModelAdmin):
+#     model = Listing
+#     list_display = ['user','Title','Category','Description','Image','Bid','Active','Time'] 
+#     list_editable = ['user','Title','Category','Description','Image','Bid','Active','Time'] 
+#     # list_editable = ['quantity', 'description', 'tax_rate', ] 

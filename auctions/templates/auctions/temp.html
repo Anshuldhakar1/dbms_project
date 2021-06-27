@@ -1,0 +1,11 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <div>
+        <h3>{{ listing.Title }}</h3>
+        <div>
+            <textarea>{{ listing.Description }}</textarea>
+        </div>
+        Bid: {{ listing.Bid }}
+    </div>
+{% endblock %}

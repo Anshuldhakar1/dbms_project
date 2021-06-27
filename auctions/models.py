@@ -3,6 +3,7 @@ from django.db import models
 
 class User(AbstractUser):
     
+    contact_no = models.CharField(max_length=14,blank=False)
     def __str__(self):
         return f"{self.username}"
 
@@ -10,7 +11,8 @@ class Listing(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings")
     Title = models.CharField(max_length=64)
     Description = models.TextField()
-    Image = models.URLField(blank=True)
+    Bid = models.OneToOneField('Bid', blank=True, null=True, on_delete=models.CASCADE, related_name="listing")
+    Image = models.URLField(blank=True,max_length=400)
     Category = models.ForeignKey('Category', on_delete=models.CASCADE, related_name="listings")
     Date = models.DateField()
     Time = models.TimeField()
@@ -25,9 +27,32 @@ class Category(models.Model):
     def __str__(self):
         return f"{self.category}"
 
+class Bid(models.Model):
+    bidder = models.ForeignKey(User, null=True, default=None, on_delete=models.CASCADE, related_name="BID")
+    bid = models.FloatField()
+    # Bid has one to one relationship with Listing
+
+    def __str__(self):
+        return f"{self.listing} for ${self.bid}"
+
 class Order(models.Model):
     By = models.CharField(max_length=30)
     action = models.CharField(max_length=30, null=True) 
 
     def __str__(self):
         return f"{self.By}"
+
+class Comment(models.Model):
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments")
+    commentor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
+    comment = models.TextField()
+
+    def __str__(self):
+        return f"{self.listing}"
+
+class Watchlist(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="watchlist")
+    listings = models.ManyToManyField(Listing, blank=True, related_name="watchlist")
+
+    def __str__(self):
+        return f"{self.user}"

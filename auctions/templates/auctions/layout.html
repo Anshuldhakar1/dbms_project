@@ -1,27 +1,62 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <title>{% block title %}{% endblock %}</title>
         {% block link %}{% endblock %}
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
     </head>
-    <body style="padding: 10px;">
-        <h1 style="display:grid; place-items: center; margin: 0 2rem 2rem 2rem;">Online Marketplace</h1>
-        <div>
+    <body>
+        <h1 class="grid_center" style="margin: 1rem;">Online Marketplace</h1>
+        <div class="grid_center">
             {% if user.is_authenticated %}
-            <div style="padding-left: 0px;">
+            <div style="padding-left: 0px; width:fit-content;">
                 <div class="alert alert-info">
                     Signed in as <strong>{{ user.username }}</strong>.
                 </div>
             </div>
             {% else %}
-            <div style="padding-left: 0px;">
+            <div style="padding-left: 0px; width:fit-content;">
                 <div class="alert alert-warning">
                     Not signed in. You will be redirected to login page if you try to access the privilages of a user.
                 </div>
             </div>
             {% endif %}
         </div>
+        <div style="background-color:white; padding:.5rem; border-radius:.5rem;">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'categories' %}">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user' request.user.username %}">Your listings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'watchlist' request.user.username %}">Watchlist</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'create_listing' %}">Create listing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">Register</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+        <hr>
         {% block body %}
         {% endblock %}
     </body>

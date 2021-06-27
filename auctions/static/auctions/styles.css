@@ -1,0 +1,8 @@
+body {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    background-color:rgb(233, 233, 233);
+}
+.grid_center {
+    display: grid;
+    place-items: center;
+}
